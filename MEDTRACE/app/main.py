@@ -81,7 +81,6 @@ def request_response(db: Session, request: AccessRequest) -> AccessRequestRespon
 
 @app.get("/health")
 def health(db: Session = Depends(get_db)):
-    # A live process without a database connection cannot serve MedTrace.
     db.execute(text("SELECT 1"))
     return {"status": "ok", "service": "medtrace-api"}
 
