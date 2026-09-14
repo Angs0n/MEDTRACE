@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedTrace - Create Account</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* iPhone Frame */
+    .phone-mockup {
+      width: 375px;
+      height: 760px;
+      background-color: #ffffff;
+      border: 4px solid #4a4d52;
+      border-radius: 48px;
+      position: relative;
+      box-shadow: inset 0 0 0 2px #1f2124, 0 0 30px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Notch */
+    .notch {
+      width: 130px;
+      height: 26px;
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 10;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      padding: 12px 28px 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #000000;
+      z-index: 5;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-signal {
+      width: 14px;
+      height: 10px;
+      fill: #000000;
+    }
+
+    .icon-wifi {
+      width: 13px;
+      height: 10px;
+      fill: #000000;
+    }
+
+    .icon-battery {
+      width: 20px;
+      height: 10px;
+      border: 1px solid #000000;
+      border-radius: 3px;
+      padding: 1px;
+      position: relative;
+    }
+
+    .icon-battery::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      background: #000000;
+      border-radius: 0 1px 1px 0;
+    }
+
+    .battery-level {
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      border-radius: 1px;
+    }
+
+    /* Screen Layout */
+    .app-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 28px 35px 28px;
+    }
+
+    .app-title {
+      color: #0c2340;
+      font-weight: 800;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-top: 12px;
+      margin-bottom: 28px;
+      letter-spacing: -0.2px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 0.85rem;
+      outline: none;
+      background-color: #ffffff;
+      color: #0f172a;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: #1976d2;
+    }
+
+    /* Actions */
+    .action-area {
+      margin-top: 16px;
+    }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      background-color: #1976d2;
+      color: #ffffff;
+      border: none;
+      border-radius: 20px;
+      padding: 13px 0;
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+
+    .login-prompt {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #475569;
+    }
+
+    .login-link {
+      color: #0c2340;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .login-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Home Indicator Notch */
+    .home-indicator {
+      width: 125px;
+      height: 4px;
+      background-color: #000000;
+      border-radius: 2px;
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-mockup">
+    <div class="notch"></div>
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg class="icon-signal" viewBox="0 0 16 12">
+          <rect x="0" y="9" width="3" height="3" rx="0.5"/>
+          <rect x="4" y="6" width="3" height="6" rx="0.5"/>
+          <rect x="8" y="3" width="3" height="9" rx="0.5"/>
+          <rect x="12" y="0" width="3" height="12" rx="0.5"/>
+        </svg>
+        <svg class="icon-wifi" viewBox="0 0 16 12">
+          <path d="M8 9.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4.24-2.83a6 6 0 0 1 8.48 0l-1.41 1.41a4 4 0 0 0-5.66 0L3.76 6.67zm-2.83-2.83a10 10 0 0 1 14.14 0l-1.41 1.41a8 8 0 0 0-11.32 0L.93 3.84z"/>
+        </svg>
+        <div class="icon-battery">
+          <div class="battery-level"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <h1 class="app-title">Create Account</h1>
+
+      <form onsubmit="event.preventDefault();">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email / Phone Number</label>
+          <input type="text" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-input" />
+        </div>
+
+        <div class="action-area">
+          <button type="submit" class="btn-submit">Create Account</button>
+          <p class="login-prompt">
+            Already have an account? <a href="#login" class="login-link">Login</a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+
+  <script src="medtrace-navigation.js"></script>
+</body>
+</html>

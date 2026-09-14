@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedTrace - Access Requests Drawer View</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* iPhone Frame */
+    .phone-mockup {
+      width: 375px;
+      height: 760px;
+      background-color: #f8fafc;
+      border: 4px solid #4a4d52;
+      border-radius: 48px;
+      position: relative;
+      box-shadow: inset 0 0 0 2px #1f2124, 0 0 30px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    /* Top Camera Notch */
+    .notch {
+      width: 130px;
+      height: 26px;
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 30;
+    }
+
+    /* Main Container Layout */
+    .screen-layout {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background-color: #f8fafc;
+      overflow: hidden;
+    }
+
+    /* Left Drawer / Sidebar Navigation */
+    .sidebar-drawer {
+      width: 70%;
+      height: 100%;
+      background-color: #ffffff;
+      padding: 64px 0 0 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-section {
+      padding: 0 24px;
+    }
+
+    .brand-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0b1f3a;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+    }
+
+    .brand-divider {
+      width: 100%;
+      height: 1px;
+      background-color: #cbd5e1;
+      margin-bottom: 28px;
+    }
+
+    /* Navigation Menu List */
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-left: 24px;
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      position: relative;
+      cursor: pointer;
+    }
+
+    /* Active State: "Access Requests" is selected */
+    .nav-item.active {
+      color: #0b1f3a;
+      font-weight: 700;
+    }
+
+    /* Blue active indicator pill on the far left edge */
+    .active-indicator-pill {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 28px;
+      background-color: #2563eb;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      flex-shrink: 0;
+    }
+
+    /* Main Content Screen Peeking from Behind on the Right */
+    .main-content-peek {
+      position: absolute;
+      top: 0;
+      left: 68%;
+      width: 100%;
+      height: 100%;
+      background-color: #f8fafc;
+      padding: 64px 16px 20px 16px;
+      z-index: 5;
+    }
+
+    .peek-header {
+      margin-bottom: 16px;
+    }
+
+    .peek-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0b1f3a;
+      white-space: nowrap;
+    }
+
+    .peek-subtitle {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    /* White Cards Peeking Behind */
+    .peek-card {
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      padding: 12px 10px;
+      margin-bottom: 16px;
+    }
+
+    .card-icon-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    /* Bottom Home Indicator Bar */
+    .home-indicator {
+      width: 125px;
+      height: 4px;
+      background-color: #000000;
+      border-radius: 2px;
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-mockup">
+    <!-- Top Camera Notch -->
+    <div class="notch"></div>
+
+    <div class="screen-layout">
+      <!-- Drawer Sidebar Menu -->
+      <aside class="sidebar-drawer">
+        <div class="brand-section">
+          <h1 class="brand-title">MedTrace</h1>
+          <div class="brand-divider"></div>
+        </div>
+
+        <ul class="nav-list">
+          <li>
+            <a class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>Patients</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Scan QR</span>
+            </a>
+          </li>
+          <li>
+            <!-- Active Selected Option: Access Requests -->
+            <a class="nav-item active">
+              <div class="active-indicator-pill"></div>
+              <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Access Requests</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Access History</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main Content Screen Peeking from Behind ("Patient Profile/Record" Page) -->
+      <main class="main-content-peek">
+        <div class="peek-header">
+          <div class="peek-title">Patie</div>
+          <div class="peek-subtitle">View con</div>
+        </div>
+
+        <!-- Top Profile Banner Card Peeking -->
+        <div class="peek-card" style="height: 110px; display: flex; align-items: flex-start;">
+          <div style="width: 8px; height: 16px; background-color: #2563eb; border-radius: 4px;"></div>
+        </div>
+
+        <!-- Main Medical Information Card Peeking -->
+        <div class="peek-card" style="height: 300px;">
+          <div class="card-icon-column">
+            <!-- Stethoscope / Medical Icon -->
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#64748b" stroke-width="2">
+              <path d="M4.8 2.3A.3.3 0 0 0 4.5 2.6v6.8a5 5 0 0 0 10 0V2.6a.3.3 0 0 0-.3-.3h-.9a.3.3 0 0 0-.3.3v6.8a3.5 3.5 0 0 1-7 0V2.6a.3.3 0 0 0-.3-.3h-.9z"/>
+              <path d="M9.5 14.4A7 7 0 0 0 16 21h1.5a2.5 2.5 0 1 0 0-5H16"/>
+            </svg>
+            <!-- Heart Icon -->
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="#ef4444" stroke="#ef4444" stroke-width="1.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Home Indicator Notch -->
+    <div class="home-indicator"></div>
+  </div>
+
+  <script src="medtrace-navigation.js"></script>
+</body>
+</html>
