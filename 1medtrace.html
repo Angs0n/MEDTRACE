@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedTrace Screen</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* iPhone Frame */
+    .phone-mockup {
+      width: 375px;
+      height: 760px;
+      background-color: #ffffff;
+      border: 4px solid #4a4d52;
+      border-radius: 48px;
+      position: relative;
+      box-shadow: inset 0 0 0 2px #1f2124, 0 0 30px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Notch */
+    .notch {
+      width: 130px;
+      height: 26px;
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 10;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      padding: 12px 28px 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #000000;
+      z-index: 5;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* SVG Status Icons matching iOS */
+    .icon-signal {
+      width: 14px;
+      height: 10px;
+      fill: #000000;
+    }
+
+    .icon-wifi {
+      width: 13px;
+      height: 10px;
+      fill: #000000;
+    }
+
+    .icon-battery {
+      width: 20px;
+      height: 10px;
+      border: 1px solid #000000;
+      border-radius: 3px;
+      padding: 1px;
+      position: relative;
+    }
+
+    .icon-battery::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      background: #000000;
+      border-radius: 0 1px 1px 0;
+    }
+
+    .battery-level {
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      border-radius: 1px;
+    }
+
+    /* Main Container */
+    .app-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px 35px 30px;
+      text-align: center;
+    }
+
+    .app-title {
+      color: #0c2340;
+      font-weight: 800;
+      font-size: 1.95rem;
+      letter-spacing: -0.3px;
+      margin-top: 10px;
+    }
+
+    /* Custom SVG Graphic reproducing the exact layout in image */
+    .illustration-svg {
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+    }
+
+    /* Text Formatting */
+    .heading-text {
+      color: #0c2340;
+      font-weight: 700;
+      font-size: 1.05rem;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .sub-text {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 0.72rem;
+      line-height: 1.35;
+      max-width: 230px;
+      margin: 0 auto;
+    }
+
+    /* Actions */
+    .action-area {
+      width: 100%;
+    }
+
+    .btn-create-account {
+      display: block;
+      width: 100%;
+      background-color: #1976d2;
+      color: #ffffff;
+      border: none;
+      border-radius: 20px;
+      padding: 13px 0;
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-bottom: 16px;
+      letter-spacing: 0.2px;
+    }
+
+    .link-login {
+      color: #0c2340;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-decoration: none;
+    }
+
+    /* Home Indicator */
+    .home-indicator {
+      width: 125px;
+      height: 4px;
+      background-color: #000000;
+      border-radius: 2px;
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-mockup">
+    <div class="notch"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg class="icon-signal" viewBox="0 0 16 12">
+          <rect x="0" y="9" width="3" height="3" rx="0.5"/>
+          <rect x="4" y="6" width="3" height="6" rx="0.5"/>
+          <rect x="8" y="3" width="3" height="9" rx="0.5"/>
+          <rect x="12" y="0" width="3" height="12" rx="0.5"/>
+        </svg>
+        <svg class="icon-wifi" viewBox="0 0 16 12">
+          <path d="M8 9.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4.24-2.83a6 6 0 0 1 8.48 0l-1.41 1.41a4 4 0 0 0-5.66 0L3.76 6.67zm-2.83-2.83a10 10 0 0 1 14.14 0l-1.41 1.41a8 8 0 0 0-11.32 0L.93 3.84z"/>
+        </svg>
+        <div class="icon-battery">
+          <div class="battery-level"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interface Content -->
+    <div class="app-content">
+      <h1 class="app-title">MedTrace</h1>
+
+      <!-- Precise Recreation of Image Graphic -->
+      <svg class="illustration-svg" viewBox="0 0 300 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stethoscope Shadow/Back -->
+        <path d="M 70 80 C 50 80, 45 140, 75 160 C 90 170, 110 165, 120 155" stroke="#94a3b8" stroke-width="4" fill="none"/>
+        <circle cx="68" cy="78" r="5" fill="#94a3b8"/>
+        
+        <!-- Background Leaf Element -->
+        <path d="M 235 110 Q 255 90 260 70 Q 240 75 225 95 Z" fill="#43a047"/>
+        <path d="M 230 120 Q 260 115 265 100 Q 245 100 235 115 Z" fill="#43a047"/>
+        <path d="M 240 100 Q 240 130 238 150" stroke="#2e7d32" stroke-width="3" fill="none"/>
+
+        <!-- Blue Phone Base -->
+        <rect x="100" y="30" width="115" height="190" rx="16" fill="#1976d2"/>
+        
+        <!-- White Phone Screen -->
+        <rect x="106" y="42" width="103" height="172" rx="10" fill="#ffffff"/>
+
+        <!-- Profile Icon -->
+        <circle cx="157" cy="70" r="20" fill="#e3f2fd"/>
+        <circle cx="157" cy="64" r="7" fill="#1976d2"/>
+        <path d="M 143 82 C 143 75, 150 74, 157 74 C 164 74, 171 75, 171 82 Z" fill="#1976d2"/>
+
+        <!-- UI Skeleton Rows on Phone -->
+        <!-- Row 1: Heart Rate -->
+        <rect x="116" y="98" width="12" height="10" rx="2" fill="#4caf50"/>
+        <line x1="134" y1="100" x2="190" y2="100" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+        <line x1="134" y1="106" x2="170" y2="106" stroke="#f1f5f9" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Row 2: Capsule -->
+        <rect x="116" y="118" width="12" height="10" rx="2" fill="#0288d1"/>
+        <line x1="134" y1="120" x2="195" y2="120" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+        <line x1="134" y1="126" x2="160" y2="126" stroke="#f1f5f9" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Row 3: Drop -->
+        <rect x="116" y="138" width="12" height="10" rx="2" fill="#d32f2f"/>
+        <line x1="134" y1="140" x2="185" y2="140" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+        <line x1="134" y1="146" x2="165" y2="146" stroke="#f1f5f9" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Blue Base / Platform Elements Front -->
+        <ellipse cx="160" cy="205" rx="110" ry="25" fill="#1565c0" opacity="0.15"/>
+        <path d="M 80 185 C 80 160, 100 150, 130 150 C 120 180, 90 190, 80 185 Z" fill="#1565c0"/>
+
+        <!-- Medical Kit (Right) -->
+        <rect x="220" y="130" width="45" height="40" rx="6" fill="#1e88e5"/>
+        <rect x="225" y="135" width="35" height="30" rx="4" fill="#29b6f6"/>
+        <path d="M 242 143 V 157 M 235 150 H 249" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Foreground Security Shield (Lock) -->
+        <g transform="translate(180, 135)">
+          <path d="M 0 10 L 25 0 L 50 10 V 28 C 50 45, 25 55, 25 55 C 25 55, 0 45, 0 28 Z" fill="#1565c0"/>
+          <path d="M 4 12 L 25 3 L 46 12 V 27 C 46 42, 25 51, 25 51 C 25 51, 4 42, 4 27 Z" fill="#1e88e5"/>
+          <!-- Lock Symbol -->
+          <rect x="18" y="24" width="14" height="12" rx="2" fill="#ffffff"/>
+          <path d="M 21 24 V 20 C 21 17.5, 28 17.5, 28 20 V 24" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+        </g>
+      </svg>
+
+      <!-- Copy -->
+      <div>
+        <h2 class="heading-text">
+          Your health information<br>wherever you go
+        </h2>
+        <p class="sub-text">
+          Securely store and share your essential medical information when you need it.
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-area">
+        <button class="btn-create-account">Create Account</button>
+        <div>
+          <a href="#login" class="link-login">Log in</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+
+  <script src="medtrace-navigation.js"></script>
+</body>
+</html>

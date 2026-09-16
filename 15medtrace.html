@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedTrace - Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Phone Mockup Frame */
+    .phone-mockup {
+      width: 375px;
+      height: 760px;
+      background-color: #e8f3f8;
+      border: 4px solid #4a4d52;
+      border-radius: 48px;
+      position: relative;
+      box-shadow: inset 0 0 0 2px #1f2124, 0 0 30px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Notch */
+    .notch {
+      width: 130px;
+      height: 26px;
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 10;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      padding: 12px 28px 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #000000;
+      z-index: 5;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-signal { width: 14px; height: 10px; fill: #000000; }
+    .icon-wifi { width: 13px; height: 10px; fill: #000000; }
+    .icon-battery {
+      width: 20px;
+      height: 10px;
+      border: 1px solid #000000;
+      border-radius: 3px;
+      padding: 1px;
+      position: relative;
+    }
+    .icon-battery::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      background: #000000;
+      border-radius: 0 1px 1px 0;
+    }
+    .battery-level {
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      border-radius: 1px;
+    }
+
+    /* Illustration Background Area */
+    .illustration-container {
+      height: 250px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 24px 20px 24px;
+    }
+
+    /* SVG Illustration Graphics */
+    .bg-graphic {
+      position: absolute;
+      top: 30px;
+      right: -10px;
+      width: 220px;
+      opacity: 0.8;
+      z-index: 1;
+    }
+
+    .brand-header {
+      position: relative;
+      z-index: 2;
+    }
+
+    .welcome-subtitle {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 2px;
+    }
+
+    .brand-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0c2340;
+    }
+
+    /* Main Form Card */
+    .login-card {
+      background-color: #ffffff;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      flex: 1;
+      padding: 24px 24px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 3;
+    }
+
+    .form-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 0.75rem;
+      color: #0f172a;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .form-input::placeholder {
+      color: #cbd5e1;
+    }
+
+    .form-input:focus {
+      border-color: #2563eb;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-password svg {
+      width: 16px;
+      height: 16px;
+      stroke: #64748b;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .forgot-link {
+      align-self: flex-end;
+      font-size: 0.65rem;
+      color: #1e293b;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: -8px;
+      margin-bottom: 24px;
+    }
+
+    .btn-login {
+      width: 100%;
+      height: 42px;
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+
+    .signup-prompt {
+      text-align: center;
+      font-size: 0.68rem;
+      color: #64748b;
+    }
+
+    .signup-link {
+      color: #0f172a;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* Home Indicator Notch */
+    .home-indicator {
+      width: 125px;
+      height: 4px;
+      background-color: #000000;
+      border-radius: 2px;
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-mockup">
+    <!-- Top Notch -->
+    <div class="notch"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg class="icon-signal" viewBox="0 0 16 12">
+          <rect x="0" y="9" width="3" height="3" rx="0.5"/>
+          <rect x="4" y="6" width="3" height="6" rx="0.5"/>
+          <rect x="8" y="3" width="3" height="9" rx="0.5"/>
+          <rect x="12" y="0" width="3" height="12" rx="0.5"/>
+        </svg>
+        <svg class="icon-wifi" viewBox="0 0 16 12">
+          <path d="M8 9.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4.24-2.83a6 6 0 0 1 8.48 0l-1.41 1.41a4 4 0 0 0-5.66 0L3.76 6.67zm-2.83-2.83a10 10 0 0 1 14.14 0l-1.41 1.41a8 8 0 0 0-11.32 0L.93 3.84z"/>
+        </svg>
+        <div class="icon-battery">
+          <div class="battery-level"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Area with Decorative Medical Graphics & Brand Title -->
+    <div class="illustration-container">
+      <svg class="bg-graphic" viewBox="0 0 200 200" fill="none">
+        <rect x="50" y="20" width="100" height="150" rx="12" fill="#3b82f6" fill-opacity="0.15"/>
+        <rect x="65" y="35" width="70" height="110" rx="8" fill="#ffffff" fill-opacity="0.6"/>
+        <path d="M120 100 Q 140 70, 160 120" stroke="#86efac" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="100" cy="70" r="12" fill="#93c5fd"/>
+        <path d="M92 105 C 92 90, 108 90, 108 105" stroke="#93c5fd" stroke-width="4"/>
+        <path d="M100 125 L100 135 M95 130 L105 130" stroke="#60a5fa" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="150" cy="140" r="14" fill="#93c5fd" fill-opacity="0.5"/>
+        <path d="M150 133 V147 M143 140 H157" stroke="#ffffff" stroke-width="3"/>
+      </svg>
+
+      <div class="brand-header">
+        <div class="welcome-subtitle">Welcome to</div>
+        <div class="brand-title">MedTrace</div>
+      </div>
+    </div>
+
+    <!-- Main Login Form -->
+    <div class="login-card">
+      <div class="form-title">Login to access MedTrace</div>
+
+      <div class="form-group">
+        <label class="form-label">Email / Provider ID</label>
+        <div class="input-wrapper">
+          <input type="text" class="form-input" placeholder="example12@gmail.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrapper">
+          <input type="password" class="form-input" placeholder="Input Password">
+          <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+            <svg viewBox="0 0 24 24">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <a href="#" class="forgot-link">Forgot Password?</a>
+
+      <button class="btn-login">Login</button>
+
+      <div class="signup-prompt">
+        Don't have an account? <a href="#" class="signup-link">Sign-Up</a>
+      </div>
+    </div>
+
+    <!-- Home Indicator Notch -->
+    <div class="home-indicator"></div>
+  </div>
+
+  <script src="medtrace-navigation.js"></script>
+</body>
+</html>
