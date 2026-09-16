@@ -24,7 +24,10 @@ API docs: http://127.0.0.1:8000/docs
 
 Landing response: http://127.0.0.1:8000/
 
-The default database is SQLite for quick demos. Set `DATABASE_URL` to a PostgreSQL connection string for deployment, for example a Neon or Supabase URL.
+The default database is SQLite for quick demos. Set `DATABASE_URL` to a pooled
+PostgreSQL connection string for deployment. For Neon, use the hostname that
+contains `-pooler`; Render instances may not have IPv6 routing to a direct
+database endpoint.
 
 ## Demo flow
 
