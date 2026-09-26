@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedTrace</title>
+<style>
+:root{
+  --navy:#0c2340; --navy2:#0d2847; --blue:#1976d2; --blue-l:#e3f2fd;
+  --gray:#64748b; --border:#e2e8f0; --bg:#f5f7fa; --card:#ffffff;
+  --danger:#d32f2f; --success:#2e7d32; --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--navy);}
+button{font-family:inherit;cursor:pointer;border:none;}
+input,select{font-family:inherit;}
+a{color:inherit;text-decoration:none;}
+
+/* ---- Shell ---- */
+#shell{display:flex;min-height:100vh;}
+#sidebar{width:230px;background:var(--navy);color:#fff;padding:22px 14px;display:flex;flex-direction:column;flex-shrink:0;}
+#sidebar h1{font-size:1.3rem;margin-bottom:26px;padding-left:8px;}
+#sidebar .navlist a{display:flex;gap:10px;align-items:center;padding:11px 10px;border-radius:10px;color:#b9c6da;font-size:.92rem;font-weight:600;margin-bottom:4px;}
+#sidebar .navlist a.active,#sidebar .navlist a:hover{background:var(--blue);color:#fff;}
+#sidebar .role-switch{margin-top:auto;font-size:.72rem;color:#8fa2bd;padding:8px;}
+#sidebar .role-switch button{background:none;color:#fff;text-decoration:underline;font-size:.72rem;}
+#main{flex:1;min-width:0;display:flex;flex-direction:column;}
+#topbar{display:none;align-items:center;gap:10px;padding:14px 18px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5;}
+#topbar button{background:none;font-size:1.2rem;color:var(--navy);}
+#topbar h2{font-size:1rem;}
+#content{flex:1;padding:30px;display:flex;justify-content:center;}
+.wrap{width:100%;max-width:460px;}
+#bottomnav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));justify-content:space-around;z-index:9;}
+#bottomnav a{display:flex;flex-direction:column;align-items:center;font-size:.6rem;color:var(--gray);font-weight:600;gap:2px;flex:1;}
+#bottomnav a.active{color:var(--blue);}
+#bottomnav svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;}
+
+@media (max-width:860px){
+  #sidebar{display:none;}
+  #topbar{display:flex;}
+  #bottomnav{display:flex;}
+  #content{padding:16px 16px 76px;}
+}
+
+/* ---- Generic view elements ---- */
+.view{display:none;}
+.view.active{display:block;animation:fade .18s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.card{background:var(--card);border-radius:var(--radius);padding:22px;border:1px solid var(--border);}
+.center{text-align:center;}
+h2.title{font-size:1.4rem;font-weight:800;margin-bottom:6px;}
+p.sub{color:var(--gray);font-size:.88rem;margin-bottom:18px;line-height:1.4;}
+.step{color:var(--blue);font-weight:700;font-size:.75rem;margin-bottom:6px;}
+label{display:block;font-size:.78rem;font-weight:700;color:var(--navy);margin:14px 0 5px;}
+input[type=text],input[type=password],input[type=date],select,textarea{
+  width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;font-size:.9rem;background:#fbfcfe;}
+input:focus,select:focus{outline:2px solid var(--blue);}
+.btn{display:block;width:100%;padding:13px;border-radius:14px;font-weight:700;font-size:.88rem;text-align:center;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue)!important;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-ghost{background:none;color:var(--blue);font-weight:700;}
+.row{display:flex;gap:10px;}
+.row .btn{flex:1;}
+.link{color:var(--blue);font-weight:700;}
+.foot-link{text-align:center;margin-top:16px;font-size:.82rem;color:var(--gray);}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--blue-l);color:var(--blue);padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600;margin:0 6px 6px 0;}
+.chip button{background:none;color:var(--blue);font-weight:800;}
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);}
+.list-item:last-child{border-bottom:none;}
+.section-title{font-size:.8rem;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.03em;margin:20px 0 8px;}
+.section-title:first-child{margin-top:0;}
+.otp-row{display:flex;gap:10px;justify-content:center;margin:18px 0;}
+.otp-row input{width:46px;height:52px;text-align:center;font-size:1.2rem;font-weight:700;}
+.checkline{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--navy);margin:12px 0;}
+.checkline input{width:auto;}
+.qr-box{width:180px;height:180px;background:#fff;border:2px solid var(--navy);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy);letter-spacing:1px;background-image:
+  repeating-linear-gradient(90deg,#0c2340 0 6px,transparent 6px 12px),
+  repeating-linear-gradient(#0c2340 0 6px,transparent 6px 12px);
+  background-size:24px 24px;background-blend-mode:multiply;background-color:#fff;}
+.qr-box span{background:#fff;padding:6px 10px;border-radius:6px;font-size:.75rem;}
+.banner{background:var(--navy2);color:#fff;border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.tile{background:var(--navy2);color:#fff;border-radius:12px;padding:14px 6px;text-align:center;font-size:.72rem;font-weight:700;cursor:pointer;}
+.qcard{display:flex;align-items:center;gap:8px;background:var(--navy2);color:#fff;border-radius:12px;padding:12px;flex:1;font-size:.72rem;font-weight:700;cursor:pointer;}
+.qgrid{display:flex;gap:10px;margin-bottom:16px;}
+.badge{font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:20px;}
+.badge.ok{background:#e8f5e9;color:var(--success);}
+.badge.warn{background:#fff3e0;color:#e65100;}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--blue-l);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 20px;border-radius:30px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s, bottom .25s;z-index:99;}
+.toast.show{opacity:1;bottom:100px;}
+@media (max-width:860px){.toast.show{bottom:96px;}}
+.hidden{display:none!important;}
+.warn-banner{background:#fff3e0;color:#e65100;border-radius:12px;padding:12px 14px;font-size:.82rem;font-weight:600;margin-bottom:16px;display:flex;gap:8px;align-items:center;}
+</style>
+</head>
+<body>
+
+<div id="shell">
+  <aside id="sidebar">
+    <h1>MedTrace</h1>
+    <div class="navlist" id="sidebarNav"></div>
+    <div class="role-switch">Viewing as <b id="roleLabel">Patient</b><br><button onclick="switchRole()">Switch role</button></div>
+  </aside>
+
+  <div id="main">
+    <div id="topbar">
+      <button id="backBtn" onclick="goBack()">&#8592;</button>
+      <h2 id="topTitle">MedTrace</h2>
+    </div>
+    <div id="content"><div class="wrap" id="viewport"></div></div>
+    <nav id="bottomnav"></nav>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<template id="tpl-views">
+<!-- ===================== SHARED / AUTH ===================== -->
+<section class="view" id="v-welcome" data-title="MedTrace" data-nav="none">
+  <div class="card center">
+    <div style="font-size:3rem">🩺</div>
+    <h2 class="title">Your health information, wherever you go</h2>
+    <p class="sub">Securely store and share your essential medical information when you need it.</p>
+    <button class="btn btn-primary" onclick="go('v-signup')">Create Account</button>
+    <div class="foot-link"><a class="link" onclick="go('v-login')">Log in</a> &middot; <a class="link" onclick="switchRole();go('v-plogin')">I'm a provider</a></div>
+  </div>
+</section>
+
+<section class="view" id="v-signup" data-title="Create Account" data-nav="none">
+  <div class="card">
+    <h2 class="title">Create Account</h2>
+    <form onsubmit="event.preventDefault();go('v-verify')">
+      <label>Full Name</label><input type="text" id="su-name" required>
+      <label>Email / Phone Number</label><input type="text" required>
+      <label>Password</label><input type="password" required>
+      <label>Confirm Password</label><input type="password" required>
+      <button class="btn btn-primary" style="margin-top:18px">Create Account</button>
+    </form>
+    <p class="foot-link">Already have an account? <a class="link" onclick="go('v-login')">Login</a></p>
+  </div>
+</section>
+
+<section class="view" id="v-verify" data-title="Verify Account" data-nav="none">
+  <div class="card center">
+    <h2 class="title">Verify Your Account</h2>
+    <p class="sub">We've sent a verification code to your phone</p>
+    <div class="otp-row">
+      <input maxlength="1" oninput="otpNext(this)"><input maxlength="1" oninput="otpNext(this)">
+      <input maxlength="1" oninput="otpNext(this)"><input maxlength="1" oninput="otpNext(this)">
+    </div>
+    <p class="foot-link">Didn't receive a code? <a class="link" onclick="toast('Code resent')">Resend code</a></p>
+    <button class="btn btn-primary" onclick="state.profile.name=document.getElementById('su-name').value||'Jenny';go('v-ob1')">Verify</button>
+  </div>
+</section>
+
+<section class="view" id="v-login" data-title="Log in" data-nav="none">
+  <div class="card">
+    <p class="sub" style="margin-bottom:0">Welcome to</p>
+    <h2 class="title">MedTrace</h2>
+    <p class="sub">Please log in to your account to continue</p>
+    <form onsubmit="event.preventDefault();state.profile.name=state.profile.name||'Jenny';go('v-dash')">
+      <label>User ID (Phone No. or Email)</label><input type="text" placeholder="example12@gmail.com">
+      <label>Password</label><input type="password" placeholder="Input Password">
+      <p class="foot-link" style="text-align:right;margin:8px 0 0"><a class="link">Forgot Password?</a></p>
+      <button class="btn btn-primary" style="margin-top:18px">Login</button>
+    </form>
+    <p class="foot-link">Don't have an account? <a class="link" onclick="go('v-signup')">Sign up</a></p>
+  </div>
+</section>
+
+<!-- ===================== ONBOARDING ===================== -->
+<section class="view" id="v-ob1" data-title="About You" data-nav="none">
+  <div class="card">
+    <p class="step">Step 1 of 4</p>
+    <h2 class="title">Tell Us About Yourself</h2>
+    <label>Full Name</label><input type="text" id="p-name">
+    <label>Date of Birth</label><input type="text" id="p-dob" placeholder="DD / MM / YYYY">
+    <label>Blood Group</label>
+    <select id="p-blood"><option>Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
+    <label>Emergency Contact</label><input type="text" id="p-contact" placeholder="Name and phone number">
+    <button class="btn btn-primary" style="margin-top:18px" onclick="saveP1();go('v-ob2')">Continue</button>
+  </div>
+</section>
+
+<section class="view" id="v-ob2" data-title="Medical Conditions" data-nav="none">
+  <div class="card">
+    <p class="step">Step 2 of 4</p>
+    <h2 class="title">Medical Conditions</h2>
+    <p class="sub">Add any medical conditions you currently have</p>
+    <label>Medical Condition</label>
+    <div class="row"><input type="text" id="cond-input" placeholder="e.g. Asthma"><button class="btn btn-outline" style="width:auto;padding:0 16px" onclick="addChip('cond-input','cond-list',state.conditions)">Add</button></div>
+    <div id="cond-list" style="margin-top:12px"></div>
+    <label class="checkline"><input type="checkbox" onchange="toggleNone(this,'cond-input',state.conditions,'cond-list')"> I don't have any conditions</label>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="go('v-ob3')">Continue</button>
+  </div>
+</section>
+
+<section class="view" id="v-ob3" data-title="Procedures" data-nav="none">
+  <div class="card">
+    <p class="step">Step 3 of 4</p>
+    <h2 class="title">Previous Procedures</h2>
+    <p class="sub">Add any major surgeries or procedures you'd like healthcare providers to know about</p>
+    <label>Procedure</label>
+    <div class="row"><input type="text" id="proc-input" placeholder="e.g. Appendectomy - 2023"><button class="btn btn-outline" style="width:auto;padding:0 16px" onclick="addChip('proc-input','proc-list',state.procedures)">Add</button></div>
+    <div id="proc-list" style="margin-top:12px"></div>
+    <p class="sub" id="proc-empty">No procedures added</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="go('v-review')">Continue</button>
+  </div>
+</section>
+
+<section class="view" id="v-review" data-title="Review" data-nav="none">
+  <div class="card">
+    <h2 class="title">Review Your Information</h2>
+    <p class="sub">Make sure everything is correct before creating your MedTrace passport</p>
+    <div id="review-body"></div>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="go('v-created')">Confirm &amp; Create Passport</button>
+  </div>
+</section>
+
+<section class="view" id="v-created" data-title="Passport Created" data-nav="none">
+  <div class="card center">
+    <div style="font-size:2.6rem">✅</div>
+    <h2 class="title">Your MedTrace QR</h2>
+    <p class="sub">Show this code to an authorized healthcare provider to request access to your medical information</p>
+    <div class="qr-box"><span>SCAN ME</span></div>
+    <button class="btn btn-primary" onclick="go('v-dash')">Go to Dashboard</button>
+  </div>
+</section>
+
+<!-- ===================== PATIENT APP ===================== -->
+<section class="view" id="v-dash" data-title="Dashboard" data-nav="dashboard">
+  <h2 class="title" id="greetTxt" style="margin-bottom:2px">Good morning, Jenny</h2>
+  <p class="sub">Your MedTrace</p>
+  <div class="banner">
+    <p style="font-weight:700;margin-bottom:14px">Your MedTrace QR</p>
+    <div class="qr-box" style="width:120px;height:120px"><span style="font-size:.65rem">SCAN ME</span></div>
+    <button class="btn btn-primary" style="width:auto;padding:8px 26px;display:inline-block" onclick="go('v-created')">Show QR</button>
+  </div>
+  <p class="section-title">Medical Profile</p>
+  <div class="grid3">
+    <div class="tile" onclick="go('v-profile')">❤️<br>Conditions</div>
+    <div class="tile" onclick="go('v-profile')">⚠️<br>Allergies</div>
+    <div class="tile" onclick="go('v-profile')">💊<br>Medications</div>
+  </div>
+  <p class="section-title">Quick Access</p>
+  <div class="qgrid">
+    <div class="qcard" onclick="go('v-emerg2')">🚨 Emergency Profile</div>
+    <div class="qcard" onclick="go('v-history')">🕘 Access History</div>
+  </div>
+  <button class="btn btn-outline" onclick="simulateRequest()">Simulate incoming access request</button>
+</section>
+
+<section class="view" id="v-profile" data-title="Medical Profile" data-nav="profile">
+  <h2 class="title">My Medical Profile</h2>
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;justify-content:space-between"><p class="section-title" style="margin-top:0">Personal Information</p><a class="link" onclick="go('v-ob1')">Edit</a></div>
+    <p style="font-size:.88rem;line-height:1.9" id="pi-view"></p>
+    <div style="display:flex;justify-content:space-between"><p class="section-title">Medical Conditions</p><a class="link" onclick="go('v-ob2')">Edit</a></div>
+    <div id="pf-cond"></div>
+    <div style="display:flex;justify-content:space-between"><p class="section-title">Previous Procedures</p><a class="link" onclick="go('v-ob3')">Edit</a></div>
+    <div id="pf-proc"></div>
+  </div>
+</section>
+
+<section class="view" id="v-request" data-title="Access Request" data-nav="none">
+  <div class="card">
+    <h2 class="title">Medical Access Request</h2>
+    <div style="display:flex;gap:10px;align-items:center;margin:14px 0"><div class="avatar">DA</div><div><b>Dr. Ahmed</b><br><span class="sub" style="margin:0">XYZ Hospital</span></div></div>
+    <p class="sub">Dr. Ahmed is requesting access to your medical information.</p>
+    <p class="section-title">Requested Information</p>
+    <div class="chip">Medical Conditions</div><div class="chip">Allergies</div><div class="chip">Medications</div>
+    <div class="row" style="margin-top:20px">
+      <button class="btn btn-outline" onclick="respondRequest(false)">Reject</button>
+      <button class="btn btn-primary" onclick="respondRequest(true)">Approve Access</button>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-history" data-title="Access History" data-nav="history">
+  <h2 class="title">Access History</h2>
+  <div class="card" style="margin-top:14px"><div id="history-list"></div></div>
+</section>
+
+<!-- ===================== EMERGENCY (patient-facing read-only) ===================== -->
+<section class="view" id="v-emerg2" data-title="Emergency Profile" data-nav="emergency">
+  <div class="warn-banner">⚠️ Visible without login for emergency responders</div>
+  <h2 class="title">Emergency Medical Information</h2>
+  <div class="card" style="margin-top:14px">
+    <p class="section-title" style="margin-top:0">Medical Conditions</p><div id="em-cond"></div>
+    <p class="section-title">Allergies</p><p>Penicillin</p>
+    <p class="section-title">Emergency Contact</p><p id="em-contact"></p>
+  </div>
+  <button class="btn btn-primary" style="margin-top:16px" onclick="go('v-dash')">Done</button>
+</section>
+
+<!-- ===================== PROVIDER APP ===================== -->
+<section class="view" id="v-plogin" data-title="Provider Login" data-nav="none">
+  <div class="card">
+    <h2 class="title">Provider Login</h2>
+    <form onsubmit="event.preventDefault();go('v-pdash')">
+      <label>Email / Provider ID</label><input type="text" placeholder="example12@gmail.com">
+      <label>Password</label><input type="password" placeholder="Input Password">
+      <p class="foot-link" style="text-align:right;margin:8px 0 0"><a class="link">Forgot Password?</a></p>
+      <button class="btn btn-primary" style="margin-top:18px">Login</button>
+    </form>
+  </div>
+</section>
+
+<section class="view" id="v-pdash" data-title="Provider Dashboard" data-nav="pdashboard">
+  <h2 class="title">Provider Dashboard</h2>
+  <div class="card" style="margin-top:14px"><div id="patient-list"></div></div>
+  <button class="btn btn-outline" style="margin-top:14px" onclick="go('v-scan')">+ Scan a new patient</button>
+</section>
+
+<section class="view" id="v-scan" data-title="Scan Patient QR" data-nav="scan">
+  <div class="card center">
+    <h2 class="title">Scan Patient QR</h2>
+    <div class="qr-box" style="border-style:dashed"><span>Scanner</span></div>
+    <button class="btn btn-primary" onclick="go('v-pfound')">Simulate Scan</button>
+  </div>
+</section>
+
+<section class="view" id="v-pfound" data-title="Patient Found" data-nav="none">
+  <div class="card">
+    <h2 class="title">Patient Found</h2>
+    <div class="list-item"><span>Patient ID</span><b>JT-000123</b></div>
+    <div class="list-item"><span>Date of Birth</span><b>** / ** / ****</b></div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="go('v-preq')">Request Access</button>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="go('v-emerg-consent')">Emergency Access</button>
+  </div>
+</section>
+
+<section class="view" id="v-preq" data-title="Request Information" data-nav="none">
+  <div class="card">
+    <h2 class="title">Request Medical Information</h2>
+    <p class="sub">Select the information you need for this consultation</p>
+    <label class="checkline"><input type="checkbox" checked> Medical conditions</label>
+    <label class="checkline"><input type="checkbox" checked> Allergies</label>
+    <label class="checkline"><input type="checkbox"> Current medications</label>
+    <label class="checkline"><input type="checkbox"> Previous procedures</label>
+    <label>Reason for Access</label>
+    <select><option>Consultation</option><option>Emergency</option><option>Routine Checkup</option></select>
+    <button class="btn btn-primary" style="margin-top:18px" onclick="go('v-psent')">Send Request</button>
+  </div>
+</section>
+
+<section class="view" id="v-psent" data-title="Request Sent" data-nav="none">
+  <div class="card center">
+    <div style="font-size:2.6rem">📨</div>
+    <h2 class="title">Request Sent</h2>
+    <p class="sub">The patient has been notified. You'll be able to view the approved information once access is granted.</p>
+    <button class="btn btn-outline" onclick="go('v-pinfo')">View Info (demo: approved)</button>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="go('v-pdash')">Back to Dashboard</button>
+  </div>
+</section>
+
+<section class="view" id="v-pinfo" data-title="Patient Medical Information" data-nav="none">
+  <div class="card">
+    <h2 class="title">Patient Medical Information</h2>
+    <p class="section-title" style="margin-top:0">Medical Conditions</p><p id="pv-cond">Asthma</p>
+    <p class="section-title">Allergies</p><p>Penicillin</p>
+    <p class="section-title">Current Medications</p><p>Paracetamol</p>
+    <p class="section-title">Previous Procedures</p><p id="pv-proc">Appendectomy - 2023</p>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="go('v-pdash')">Done</button>
+  </div>
+</section>
+
+<section class="view" id="v-emerg-consent" data-title="Emergency Access" data-nav="none">
+  <div class="card center">
+    <div style="font-size:2.6rem">🚨</div>
+    <h2 class="title">The patient cannot provide consent</h2>
+    <p class="sub">Emergency access provides critical medical information needed for immediate care. This access is logged and reviewable by the patient.</p>
+    <button class="btn btn-danger" onclick="go('v-emerg-info')">Continue</button>
+  </div>
+</section>
+
+<section class="view" id="v-emerg-info" data-title="Emergency Info" data-nav="none">
+  <div class="warn-banner">⚠️ Allergies</div>
+  <div class="card">
+    <h2 class="title">Emergency Medical Information</h2>
+    <p class="section-title" style="margin-top:0">Medical Conditions</p><p>Asthma</p>
+    <p class="section-title">Allergies</p><p>Penicillin</p>
+    <p class="section-title">Emergency Contact</p><p>Next of kin — 555-0123</p>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="go('v-emerg-done')">Done</button>
+  </div>
+</section>
+
+<section class="view" id="v-emerg-done" data-title="Access Recorded" data-nav="none">
+  <div class="card center">
+    <div style="font-size:2.6rem">✅</div>
+    <h2 class="title">Emergency Access Recorded</h2>
+    <p class="sub">XYZ Hospital accessed this patient's emergency profile. The patient will see this in their access history.</p>
+    <button class="btn btn-primary" onclick="go('v-pdash')">Done</button>
+  </div>
+</section>
+</template>
+
+<script>
+/* ---------------- state ---------------- */
+const state = {
+  role:'patient',
+  profile:{name:'Jenny',dob:'',blood:'Select',contact:''},
+  conditions:[], procedures:[],
+  history:[
+    {org:'XYZ Hospital',doc:'Dr. Ahmed',items:'Conditions, Allergies, Medication',date:'2 days ago'},
+    {org:'ABC Hospital',doc:'Dr. Sarah',items:'Conditions, Vitals, Medication',date:'1 week ago'}
+  ],
+  patients:[
+    {name:'John Taylor',scan:'Today, 9:12am'},
+    {name:'Maria Lopez',scan:'Yesterday'},
+    {name:'Sam Peters',scan:'3 days ago'}
+  ]
+};
+let navStack=[];
+
+const PATIENT_NAV=[
+  ['v-dash','🏠','Dashboard'],['v-profile','📋','Medical Profile'],
+  ['v-created','▦','My QR Code'],['v-emerg2','🚨','Emergency Profile'],
+  ['v-history','🕘','Access History']
+];
+const PROVIDER_NAV=[
+  ['v-pdash','🏠','Dashboard'],['v-pdash','🧑‍🤝‍🧑','Patients'],
+  ['v-scan','▦','Scan QR'],['v-preq','📥','Access Requests'],['v-pdash','🕘','Access History']
+];
+
+function buildNav(){
+  const items = state.role==='patient'?PATIENT_NAV:PROVIDER_NAV;
+  document.getElementById('roleLabel').textContent = state.role==='patient'?'Patient':'Provider';
+  document.getElementById('sidebarNav').innerHTML = items.map(i=>`<a onclick="go('${i[0]}')" data-target="${i[0]}"><span>${i[1]}</span>${i[2]}</a>`).join('');
+  document.getElementById('bottomnav').innerHTML = items.map(i=>`<a onclick="go('${i[0]}')" data-target="${i[0]}"><span>${i[1]}</span>${i[2]}</a>`).join('');
+}
+function switchRole(){
+  state.role = state.role==='patient'?'provider':'patient';
+  buildNav();
+  go(state.role==='patient'?'v-welcome':'v-plogin', true);
+}
+
+function highlightNav(id){
+  document.querySelectorAll('#sidebarNav a,#bottomnav a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.target===id);
+  });
+}
+
+function go(id, reset){
+  if(reset) navStack=[];
+  const cur = document.querySelector('.view.active');
+  if(cur && cur.id!==id) navStack.push(cur.id);
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  document.getElementById('topTitle').textContent = el.dataset.title;
+  document.getElementById('backBtn').style.visibility = navStack.length?'visible':'hidden';
+  highlightNav(id);
+  renderDynamic(id);
+  window.scrollTo(0,0);
+}
+function goBack(){ if(navStack.length){ const id=navStack.pop(); document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); const el=document.getElementById(id); el.classList.add('active'); document.getElementById('topTitle').textContent=el.dataset.title; document.getElementById('backBtn').style.visibility=navStack.length?'visible':'hidden'; highlightNav(id); renderDynamic(id);} }
+
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* ---- otp auto advance ---- */
+function otpNext(el){ if(el.value.length===1 && el.nextElementSibling) el.nextElementSibling.focus(); }
+
+/* ---- onboarding helpers ---- */
+function saveP1(){
+  state.profile.name = document.getElementById('p-name').value || state.profile.name;
+  state.profile.dob = document.getElementById('p-dob').value;
+  state.profile.blood = document.getElementById('p-blood').value;
+  state.profile.contact = document.getElementById('p-contact').value;
+}
+function addChip(inputId,listId,arr){
+  const inp=document.getElementById(inputId);
+  if(!inp.value.trim())return;
+  arr.push(inp.value.trim()); inp.value='';
+  renderChips(listId,arr);
+}
+function renderChips(listId,arr){
+  document.getElementById(listId).innerHTML = arr.map((c,i)=>`<span class="chip">${c}<button onclick="arr_remove('${listId}',${i})">&times;</button></span>`).join('');
+  const empty=document.getElementById('proc-empty'); if(empty) empty.style.display = state.procedures.length?'none':'block';
+}
+function arr_remove(listId,i){
+  const arr = listId==='cond-list'?state.conditions:state.procedures;
+  arr.splice(i,1); renderChips(listId,arr);
+}
+function toggleNone(cb,inputId,arr,listId){
+  document.getElementById(inputId).disabled=cb.checked;
+  if(cb.checked){ arr.length=0; renderChips(listId,arr); }
+}
+
+function renderDynamic(id){
+  if(id==='v-review'){
+    document.getElementById('review-body').innerHTML = `
+      <p class="section-title" style="margin-top:0">Personal Information</p>
+      <p style="font-size:.88rem">Name: ${state.profile.name||'—'}<br>DOB: ${state.profile.dob||'—'}<br>Blood group: ${state.profile.blood||'—'}</p>
+      <p class="section-title">Medical Conditions</p>
+      <p style="font-size:.88rem">${state.conditions.join(', ')||'None reported'}</p>
+      <p class="section-title">Previous Procedures</p>
+      <p style="font-size:.88rem">${state.procedures.join(', ')||'None added'}</p>
+      <p class="section-title">Emergency Contact</p>
+      <p style="font-size:.88rem">${state.profile.contact||'—'}</p>`;
+  }
+  if(id==='v-dash'){ document.getElementById('greetTxt').textContent = 'Good morning, '+(state.profile.name||'Jenny'); }
+  if(id==='v-profile'){
+    document.getElementById('pi-view').innerHTML = `Name: ${state.profile.name||'—'}<br>Date of birth: ${state.profile.dob||'—'}<br>Blood group: ${state.profile.blood||'—'}`;
+    document.getElementById('pf-cond').innerHTML = state.conditions.length? state.conditions.map(c=>`<span class="chip">${c}</span>`).join('') : '<p class="sub" style="margin:0">None reported</p>';
+    document.getElementById('pf-proc').innerHTML = state.procedures.length? state.procedures.map(c=>`<span class="chip">${c}</span>`).join('') : '<p class="sub" style="margin:0">None added</p>';
+  }
+  if(id==='v-emerg2'){
+    document.getElementById('em-cond').innerHTML = state.conditions.length? state.conditions.map(c=>`<p>${c}</p>`).join('') : '<p>None reported</p>';
+    document.getElementById('em-contact').textContent = state.profile.contact || 'Not set';
+  }
+  if(id==='v-history'){
+    document.getElementById('history-list').innerHTML = state.history.map(h=>`
+      <div class="list-item"><div><b>${h.org}</b><br><span class="sub" style="margin:0">${h.doc} &middot; ${h.items}</span></div><span class="badge ok">${h.date}</span></div>`).join('') || '<p class="sub">No access recorded yet.</p>';
+  }
+  if(id==='v-pdash'){
+    document.getElementById('patient-list').innerHTML = state.patients.map(p=>`
+      <div class="list-item"><div style="display:flex;gap:10px;align-items:center"><div class="avatar">${p.name[0]}</div><div><b>${p.name}</b><br><span class="sub" style="margin:0">Last scan: ${p.scan}</span></div></div><a class="link" onclick="go('v-pfound')">View</a></div>`).join('');
+  }
+}
+
+function simulateRequest(){ go('v-request'); }
+function respondRequest(approved){
+  if(approved){
+    state.history.unshift({org:'XYZ Hospital',doc:'Dr. Ahmed',items:'Conditions, Allergies, Medication',date:'Just now'});
+    toast('Access approved — added to history');
+  } else { toast('Request rejected'); }
+  go('v-dash');
+}
+
+/* ---- boot ---- */
+document.getElementById('viewport').appendChild(document.getElementById('tpl-views').content.cloneNode(true));
+buildNav();
+go('v-welcome', true);
+</script>
+</body>
+</html>
